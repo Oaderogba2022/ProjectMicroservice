@@ -1,16 +1,10 @@
 package ie.atu.projectserviceapplication;
 
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.LocalDate;
 import java.util.List;
 
-@Data
+/*@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "projects")
@@ -29,4 +23,64 @@ public class Project {
     private LocalDate endDate;
 
     private List<String> tasks;
+}*/
+
+@Document(collection = "projects")
+public class Project {
+
+    @Id
+    private String id;
+    private String name;
+    private String description;
+    private String startDate;
+    private String endDate;
+    private List<String> tasks;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public List<String> getTasks() {
+        return tasks;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setTasks(List<String> tasks) {
+        this.tasks = tasks;
+    }
 }
