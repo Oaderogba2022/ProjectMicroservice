@@ -27,7 +27,6 @@ public class Project {
 
 @Document(collection = "projects")
 public class Project {
-
     @Id
     private String id;
     private String name;
@@ -36,6 +35,19 @@ public class Project {
     private String endDate;
     private List<String> tasks;
 
+    public Project() {
+    }
+
+    public Project(String id, String name, String description, String startDate, String endDate, List<String> tasks) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.tasks = tasks;
+    }
+
+    // Getters and setters
     public String getId() {
         return id;
     }
