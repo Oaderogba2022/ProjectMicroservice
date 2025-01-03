@@ -1,5 +1,6 @@
 package ie.atu.projectserviceapplication;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,14 +11,21 @@ import java.util.Optional;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, RabbitTemplate rabbitTemplate) {
         this.projectRepository = projectRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Project createProject(Project project) {
-        return projectRepository.save(project);
+        Project createdProject = projectRepository.save(project);
+
+        // Send the created project to RabbitMQ
+        rabbitTemplate.convertAndSend("projectQueue", createdProject);
+
+        return createdProject;
     }
 
     public Project getProjectById(String projectId) {
@@ -37,6 +45,10 @@ public class ProjectService {
             project.setStartDate(projectDetails.getStartDate());
             project.setEndDate(projectDetails.getEndDate());
             project.setTasks(projectDetails.getTasks());
+
+            // Send the updated project to RabbitMQ
+            rabbitTemplate.convertAndSend("projectQueue", project);
+
             return projectRepository.save(project);
         }
         return null;
@@ -46,6 +58,9 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         if (project != null) {
             projectRepository.delete(project);
+
+            rabbitTemplate.convertAndSend("projectQueue", "Project Deleted: " + projectId);
+
             return true;
         }
         return false;
