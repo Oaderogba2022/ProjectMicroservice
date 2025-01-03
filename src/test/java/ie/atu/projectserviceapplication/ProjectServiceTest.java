@@ -3,6 +3,7 @@ package ie.atu.projectserviceapplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +16,15 @@ class ProjectServiceTest {
     @Mock
     private ProjectRepository projectRepository;
 
+    @Mock
+    private RabbitTemplate rabbitTemplate;
+
     private ProjectService projectService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        projectService = new ProjectService(projectRepository);
+        projectService = new ProjectService(projectRepository, rabbitTemplate);
     }
 
     @Test
@@ -32,6 +36,8 @@ class ProjectServiceTest {
 
         assertNotNull(createdProject);
         assertEquals("Test Project", createdProject.getName());
+
+        verify(rabbitTemplate, times(1)).convertAndSend("projectQueue", project);
     }
 
     @Test
@@ -55,6 +61,8 @@ class ProjectServiceTest {
         Project updatedProject = projectService.updateProject("1", project);
 
         assertEquals("Updated Project", updatedProject.getName());
+
+        verify(rabbitTemplate, times(1)).convertAndSend("projectQueue", project);
     }
 
     @Test
@@ -65,6 +73,8 @@ class ProjectServiceTest {
         boolean isDeleted = projectService.deleteProject("1");
 
         assertTrue(isDeleted);
+
+        verify(rabbitTemplate, times(1)).convertAndSend("projectQueue", "Project Deleted: 1");
     }
 
     @Test
