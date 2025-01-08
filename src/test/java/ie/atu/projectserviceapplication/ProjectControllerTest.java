@@ -20,7 +20,7 @@ class ProjectControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this) ;
         projectController = new ProjectController(projectService);
     }
 
